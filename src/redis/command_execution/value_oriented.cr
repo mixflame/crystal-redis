@@ -11,6 +11,9 @@ class Redis
       # This is an internal method.
       def integer_command(request : Request) : Int64
         command(request).as(Int64)
+        rescue ex : TypeCastError
+          File.open("/tmp/crash.log", "a") { |f| f.puts("#{Time.local} - #{ex.message.inspect} - #{ex.backtrace.inspect}") }
+          raise ex
       end
 
       # Executes a Redis command and casts it to the correct type.
